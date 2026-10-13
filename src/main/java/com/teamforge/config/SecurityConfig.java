@@ -5,6 +5,7 @@ import com.teamforge.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -72,23 +73,29 @@ public class SecurityConfig {
 
             .authorizeHttpRequests(auth -> auth
 
+                // Allow CORS preflight requests
+                .requestMatchers(
+                    HttpMethod.OPTIONS,
+                    "/**"
+                ).permitAll()
+
                 // Public endpoints
                 .requestMatchers(
                     "/api/auth/login",
                     "/api/health"
                 ).permitAll()
 
-                // Public registration is disabled
+                // Public registration disabled
                 .requestMatchers(
                     "/api/auth/register"
                 ).denyAll()
 
-                // Candidate endpoints will be implemented separately
+                // Candidate endpoints
                 .requestMatchers(
                     "/api/candidate/**"
                 ).hasAnyRole("ADMIN", "CANDIDATE")
 
-                // Existing modules: ADMIN only
+                // Admin-only endpoints
                 .requestMatchers(
                     "/api/**"
                 ).hasRole("ADMIN")
@@ -109,22 +116,49 @@ public class SecurityConfig {
 
         CorsConfiguration configuration = new CorsConfiguration();
 
+        // Allow localhost and deployed Vercel frontend
         configuration.setAllowedOrigins(
-            List.of("http://localhost:5173")
+            List.of(
+                "http://localhost:5173",
+                "https://team-forge-frontend-alpha.vercel.app"
+            )
+        );
+
+        // Allow Vercel preview deployment URLs
+        configuration.setAllowedOriginPatterns(
+            List.of(
+                "https://team-forge-frontend-*.vercel.app"
+            )
         );
 
         configuration.setAllowedMethods(
-            List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")
+            List.of(
+                "GET",
+                "POST",
+                "PUT",
+                "PATCH",
+                "DELETE",
+                "OPTIONS"
+            )
         );
 
         configuration.setAllowedHeaders(
-            List.of("Authorization", "Content-Type", "Accept")
+            List.of(
+                "Authorization",
+                "Content-Type",
+                "Accept"
+            )
         );
+
+        configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();
 
-        source.registerCorsConfiguration("/api/**", configuration);
+        source.registerCorsConfiguration(
+            "/api/**",
+            configuration
+        );
 
         return source;
     }
