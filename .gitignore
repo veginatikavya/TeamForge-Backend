@@ -1,0 +1,65 @@
+# ========================================
+# TeamForge - Git Ignore
+# ========================================
+
+# Java / Spring Boot
+target/
+**/target/
+*.class
+*.log
+HELP.md
+
+# Maven
+.mvn/wrapper/maven-wrapper.jar
+
+# React / Node.js
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+build/
+**/build/
+coverage/
+.vite/
+
+# Environment variables and secrets
+.env
+.env.*
+**/.env
+**/.env.*
+!.env.example
+!**/.env.example
+*.pem
+*.key
+
+# IDE settings
+.vscode/
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Eclipse / Spring Tool Suite
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache
+
+# Operating system files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+
+# Local database files
+*.sqlite
+*.sqlite3
+*.db
